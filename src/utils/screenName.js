@@ -1,11 +1,16 @@
-  const homeStack = {
-    tab: "HomeTab",
-    tabStack:"HomeTab"
-  };
+const homeStack = {
+  tab: "HomeTab",
+  tabpro: "HomeTabPro",
+  tabStack: "HomeTabStack",
+};
   const plantsStack = {
     tab: "PlantsTab",
     plantas:"Plantas",
     addPlant: "AddPlant",
+  };
+  const liveStack = {
+    tab: "LiveTab",
+    live: "Live"
   };
   const environmentStack = {
     tab: "EnvironmentTab",
@@ -34,7 +39,7 @@
   };
   const Auth = {
     register: "Register", // O el nombre que corresponda en tu configuración
-    // Otras propiedades si las necesitas
+    registerstack: "RegisterStack", 
   };
   export const screen = {
     Home: homeStack,
@@ -42,6 +47,7 @@
     Environment: environmentStack,
     Gallery: galleryStack,
     Feed: feedStack,
+    Live: liveStack,
     Config: configStack,
     ExpStack:expStack,
     AgeVal:AgeValidationStack,

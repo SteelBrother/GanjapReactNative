@@ -1,23 +1,48 @@
-import { StyleSheet } from 'react-native';
-
+// LoginForm.styles.js
+import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   content: {
     flex: 1,
-    justifyContent: 'center', // Centra el contenido verticalmente
-    paddingHorizontal: 20, // Añade un padding horizontal
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+    width: '100%',
+  },
+  logo: {
+    width: 120,  // Tamaño del logo, puedes ajustarlo según necesites
+    height: 120,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   input: {
-    marginBottom: 15, // Espaciado entre inputs
-    width: '100%', // Asegúrate de que el ancho sea del 100% de su contenedor
+    marginBottom: 10,
+    width: "100%",
+  },
+  inputContainer: {
+    borderBottomWidth: 1,
+    borderColor: "#e0e0e0",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    height: 50,
   },
   icon: {
-    color: '#000', // Color del ícono
+    color: "#c1c1c1",
   },
   btnContainer: {
     marginTop: 20,
-    width: '100%', // Asegúrate de que el botón también ocupe el 100% del ancho
+    width: "95%",
   },
   btn: {
-    backgroundColor: '#007bff', // Color del botón
+    backgroundColor: "#34d399",
+  },
+  registerLink: {
+    marginTop: 15,
+    color: "#3498db",
+    textDecorationLine: "underline",
   },
 });

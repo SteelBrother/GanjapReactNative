@@ -1,97 +1,91 @@
-import React from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import React, { useState } from "react";
+import { View } from "react-native";
+import { styles } from "./RegisterForm.styles";
+import { Input, Icon, Button } from "react-native-elements";
+// import { useFormik } from "formik";
+// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+// import { useNavigation } from "@react-navigation/native";
+// import Toast from "react-native-toast-message";
+// import { screen } from "../../../utils/screenName";  // Asegúrate de que la ruta sea correcta
+// import { initialValues, validationSchema } from "./RegisterForm.data";
 
-// Esquema de validación usando Yup
-const validationSchema = Yup.object().shape({
-  email: Yup.string().email("Correo inválido").required("Correo requerido"),
-  password: Yup.string().min(6, "Mínimo 6 caracteres").required("Contraseña requerida"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Las contraseñas deben coincidir")
-    .required("Confirmación de contraseña requerida"),
-});
+export function RegisterForm() {
+//   const [showPassword, setShowPassword] = useState(false);
+//   const navigation = useNavigation();
 
-export default function RegisterForm() {
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      Alert.alert("Registro exitoso", "Formulario enviado: " + JSON.stringify(values));
-    },
-  });
+//   const formik = useFormik({
+//     initialValues: initialValues(),
+//     validationSchema: validationSchema(),
+//     validateOnChange: false,
+//     onSubmit: async (formValue) => {
+//       try {
+//         const auth = getAuth();
+//         await createUserWithEmailAndPassword(
+//           auth,
+//           formValue.email,
+//           formValue.password
+//         );
+//         navigation.navigate(screen.AgeVal.tab);
+//       } catch (error) {
+//         Toast.show({
+//           type: "error",
+//           position: "bottom",
+//           text1: "Error al registrarse, intentelo mas tarde",
+//         });
+//       }
+//     },
+//   });
+
+  const showHidenPassword = () => setShowPassword((prevState) => !prevState);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Correo Electrónico</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingresa tu correo"
-        keyboardType="email-address"
-        onChangeText={formik.handleChange("email")}
-        value={formik.values.email}
-        onBlur={formik.handleBlur("email")}
+    <View style={styles.content}>
+      <Input
+        placeholder="Correo electronico"
+        containerStyle={styles.input}
+        rightIcon={
+          <Icon type="material-community" name="at" iconStyle={styles.icon} />
+        }
+        onChangeText={(text) => formik.setFieldValue("email", text)}
+        // errorMessage={formik.errors.email}
       />
-      {formik.touched.email && formik.errors.email ? (
-        <Text style={styles.error}>{formik.errors.email}</Text>
-      ) : null}
-
-      <Text style={styles.label}>Contraseña</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ingresa tu contraseña"
-        secureTextEntry
-        onChangeText={formik.handleChange("password")}
-        value={formik.values.password}
-        onBlur={formik.handleBlur("password")}
+      {/* <Input
+        placeholder="Contraseña"
+        containerStyle={styles.input}
+        secureTextEntry={showPassword ? false : true}
+        rightIcon={
+          <Icon
+            type="material-community"
+            name={showPassword ? "eye-off-outline" : "eye-outline"}
+            iconStyle={styles.icon}
+            onPress={showHidenPassword}
+          />
+        }
+        onChangeText={(text) => formik.setFieldValue("password", text)}
+        errorMessage={formik.errors.password}
       />
-      {formik.touched.password && formik.errors.password ? (
-        <Text style={styles.error}>{formik.errors.password}</Text>
-      ) : null}
-
-      <Text style={styles.label}>Confirmar Contraseña</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Confirma tu contraseña"
-        secureTextEntry
-        onChangeText={formik.handleChange("confirmPassword")}
-        value={formik.values.confirmPassword}
-        onBlur={formik.handleBlur("confirmPassword")}
+      <Input
+        placeholder="Repetir contraseña"
+        containerStyle={styles.input}
+        secureTextEntry={showPassword ? false : true}
+        rightIcon={
+          <Icon
+            type="material-community"
+            name={showPassword ? "eye-off-outline" : "eye-outline"}
+            iconStyle={styles.icon}
+            onPress={showHidenPassword}
+          />
+        }
+        onChangeText={(text) => formik.setFieldValue("repeatPassword", text)}
+        errorMessage={formik.errors.repeatPassword}
       />
-      {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
-        <Text style={styles.error}>{formik.errors.confirmPassword}</Text>
-      ) : null}
-
-      <Button title="Registrarse" onPress={formik.handleSubmit} />
+      <Button
+        title="Unirse"
+        containerStyle={styles.btnContainer}
+        buttonStyle={styles.btn}
+        onPress={formik.handleSubmit}
+        loading={formik.isSubmitting}
+      /> */}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  label: {
-    marginVertical: 10,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  input: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  error: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 10,
-  },
-});
-

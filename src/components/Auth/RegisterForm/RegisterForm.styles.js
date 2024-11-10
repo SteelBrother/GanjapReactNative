@@ -3,22 +3,26 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   content: {
     flex: 1,
-    alignItems: "center",
     justifyContent: "center",
-    marginTop: 30,
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#fff", // Fondo blanco
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   input: {
-    width: "100%",
-    marginTop: 20,
+    marginBottom: 15,
   },
   icon: {
     color: "#c1c1c1",
   },
   btnContainer: {
-    marginTop: 20,
-    width: "95%",
+    width: "100%",
   },
   btn: {
-    backgroundColor: "#00a680",
+    backgroundColor: "#007bff", // Color de fondo del botón
   },
 });
