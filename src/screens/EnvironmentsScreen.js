@@ -1,24 +1,61 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
+import { firestore } from '../utils/firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+import { getAuth } from 'firebase/auth'; // Importa la autenticación de Firebase
 
 export default function EnvironmentsScreen() {
+  const [userId, setUserId] = useState(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    // Obtén el usuario autenticado de Firebase Auth
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUserId(currentUser.uid);
+    } else {
+      console.log("Usuario no autenticado");
+    }
+  }, []);
+
   const environments = [
     {
       id: '1',
       title: 'Interior',
       description: '¿Estás cultivando en interiores? Cree un "ambiente interior" y establezca el tamaño de su ambiente, sus luces y tiempo de exposición.',
-      iconName: 'plant-pot', // Ajusta el nombre de ícono según el paquete que uses
+      iconName: 'plant-pot',
       buttonText: 'CREAR INTERIOR',
     },
     {
       id: '2',
       title: 'Exterior',
       description: '¿Estás cultivando al aire libre? Crea un "Ambiente Exterior" y registra cuántas horas de luz solar reciben tus plantas.',
-      iconName: 'tree-outline', // Ajusta el nombre de ícono según el paquete que uses
+      iconName: 'tree-outline',
       buttonText: 'CREAR EXTERIOR',
     },
   ];
+
+  const createEnvironment = async (environment) => {
+    if (!userId) {
+      console.error("Error: userId es indefinido");
+      return;
+    }
+    try {
+      await addDoc(collection(firestore, 'environments'), {
+        userId: userId,
+        title: environment.title,
+        description: environment.description,
+        createdAt: new Date(),
+      });
+      console.log(`Ambiente ${environment.title} creado`);
+      navigation.navigate('EnvironmentList');
+    } catch (error) {
+      console.error("Error al crear ambiente:", error);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -31,7 +68,7 @@ export default function EnvironmentsScreen() {
             title={environment.buttonText}
             buttonStyle={styles.button}
             titleStyle={styles.buttonText}
-            onPress={() => console.log(`Creando ${environment.title}`)}
+            onPress={() => createEnvironment(environment)}
           />
         </View>
       ))}

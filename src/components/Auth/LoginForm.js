@@ -46,7 +46,7 @@ export function LoginForm({ onLogin }) { // Asegúrate de recibir `onLogin`
 
   return (
     <View style={styles.content}>
-      <Image source={require("../../../assets/favicon.png")} style={styles.logo} />
+      <Image source={require("../../../assets/img/app-logo.png")} style={styles.logo} />
       <Text style={styles.title}>Iniciar Sesión</Text>
       <Input
         placeholder="Correo electrónico"

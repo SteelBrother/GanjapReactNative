@@ -1,55 +1,60 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { FAB, Icon } from 'react-native-elements';
+import { firestore } from '../utils/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { getAuth } from 'firebase/auth';
 
 export default function PlantsScreen() {
-  const stages = [
-    {
-      id: '1',
-      title: 'Germinación',
-      description: 'De semilla a plántula. Primero, la semilla se abre y muestra una raíz principal blanca. Entonces, aparece el primer par de pequeñas hojas redondas llamadas "cotiledones".',
-      iconName: 'seed-outline',
-      buttonText: 'Crear',
-    },
-    {
-      id: '2',
-      title: 'Plántula',
-      description: 'Cuando se abre la semilla de marihuana, el primer par de pequeñas hojas redondas que aparecen se llaman “cotiledones”. A medida que la planta crece, comienzan a desarrollarse nuevas hojas con más folíolos.',
-      iconName: 'leaf-outline',
-      buttonText: 'Crear',
-    },
-    {
-      id: '3',
-      title: 'Vegetativo',
-      description: 'Después de desarrollar el segundo conjunto de hojas, la planta entra en la etapa vegetativa. Por ahora, la planta solo produce tallos y hojas (no tiene flores).',
-      iconName: 'tree-outline',
-      buttonText: 'Crear',
-    },
-    {
-      id: '4',
-      title: 'Floración',
-      description: 'La etapa de floración es el período en el que las plantas desarrollan sus flores. Primero, verá las preflores femeninas, pares de pelos blancos que salen de un cáliz verde de punta redonda.',
-      iconName: 'flower-outline',
-      buttonText: 'Crear',
-    },
-  ];
+  const [plants, setPlants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
+  const fetchPlants = async () => {
+    try {
+      if (currentUser) {
+        const q = query(collection(firestore, 'plants'), where('userId', '==', currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        const plantsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPlants(plantsList);
+      }
+    } catch (error) {
+      console.error("Error al cargar plantas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPlants();
+    }, [])
+  );
+
+  const renderPlantItem = ({ item }) => (
+    <TouchableOpacity onPress={() => navigation.navigate('PlantDetailScreen', { plantId: item.id })}>
+      <View style={styles.plantCard}>
+        <Image source={{ uri: item.image || '../../assets/img/plant.jpg' }} style={styles.plantImage} />
+        <View>
+          <Text style={styles.plantName}>{item.name}</Text>
+          <Text style={styles.plantStage}>Etapa: {item.stage}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
-    <ScrollView style={styles.container}>
-      {stages.map((stage) => (
-        <View key={stage.id} style={styles.card}>
-          <Icon name={stage.iconName} type="material-community" color="#A3D77F" size={40} />
-          <Text style={styles.title}>{stage.title}</Text>
-          <Text style={styles.description}>{stage.description}</Text>
-          <Button
-            title={stage.buttonText}
-            buttonStyle={styles.button}
-            titleStyle={styles.buttonText}
-            onPress={() => console.log(`Creando ${stage.title}`)}
-          />
-        </View>
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      {loading ? (
+        <Text style={styles.loadingText}>Cargando...</Text>
+      ) : (
+        <FlatList data={plants} renderItem={renderPlantItem} keyExtractor={(item) => item.id} />
+      )}
+      <FAB icon={<Icon name="add" color="#fff" />} placement="right" onPress={() => navigation.navigate('PlantCreationScreen')} color="#A3D77F" />
+    </View>
   );
 }
 
@@ -57,35 +62,67 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1E1E1E',
-  },
-  card: {
-    backgroundColor: '#333333',
-    borderRadius: 10,
     padding: 16,
-    margin: 10,
-    alignItems: 'center',
   },
-  title: {
-    fontSize: 18,
+  headerText: {
+    fontSize: 22,
+    color: '#A3D77F',
     fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginTop: 8,
+    marginBottom: 10,
+    textAlign: 'center',
   },
-  description: {
-    fontSize: 14,
+  loadingText: {
+    fontSize: 18,
+    color: '#A3D77F',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  emptyText: {
+    fontSize: 16,
     color: '#CCCCCC',
     textAlign: 'center',
-    marginVertical: 10,
+    marginTop: 20,
   },
-  button: {
-    backgroundColor: '#A3D77F',
-    borderRadius: 5,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
+  plantCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2E2E2E',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  buttonText: {
-    fontSize: 14,
+  plantImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 16,
+    borderColor: '#A3D77F',
+    borderWidth: 1,
+  },
+  plantInfo: {
+    flex: 1,
+  },
+  plantName: {
+    fontSize: 18,
+    color: '#FFFFFF',
     fontWeight: 'bold',
-    color: '#1E1E1E',
+    marginBottom: 4,
+  },
+  plantStage: {
+    fontSize: 14,
+    color: '#A3D77F',
+  },
+  fabStyle: {
+    backgroundColor: '#A3D77F',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
 });

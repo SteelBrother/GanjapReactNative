@@ -6,7 +6,6 @@ import { useFormik } from "formik";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
-import { screen } from "../../../utils/screenName";
 import { initialValues, validationSchema } from "./RegisterScreen.data";
 import { Image } from 'react-native';
 
@@ -21,23 +20,37 @@ export default function RegisterScreen() {
     onSubmit: async (formValue) => {
       try {
         const auth = getAuth();
-        await createUserWithEmailAndPassword(auth, formValue.email, formValue.password);
+        await createUserWithEmailAndPassword(auth, formValue.email.trim(), formValue.password.trim());
         navigation.navigate("AgeValidation"); // Navega a la pantalla de validación de edad
       } catch (error) {
+        let errorMessage = "Error al registrarse, inténtelo más tarde";
+  
+        // Manejo de errores específicos de Firebase
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = "El correo electrónico ya está en uso. Prueba con otro o inicia sesión si ya tienes cuenta.";
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = "El correo electrónico no es válido.";
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = "La contraseña es demasiado débil. Debe tener al menos 6 caracteres.";
+        }
+  
+        // Mostrar error para depuración (puedes comentar esto en producción)
+        console.error('Firebase registration error: ', error);
+  
         Toast.show({
           type: "error",
           position: "bottom",
-          text1: "Error al registrarse, inténtelo más tarde",
+          text1: errorMessage,
         });
       }
     },
   });
-
+  
   const togglePasswordVisibility = () => setShowPassword((prevState) => !prevState);
 
   return (
     <View style={styles.content}>
-      <Image source={require("../../../../assets/favicon.png")} style={styles.logo} />
+      <Image source={require("../../../../assets/img/app-logo.png")} style={styles.logo} />
       <Text style={styles.title}>Registro</Text>
       <Input
         placeholder="Correo electrónico"
@@ -45,6 +58,8 @@ export default function RegisterScreen() {
         rightIcon={<Icon type="material-community" name="at" iconStyle={styles.icon} />}
         onChangeText={(text) => formik.setFieldValue("email", text)}
         errorMessage={formik.errors.email}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <Input
         placeholder="Contraseña"
@@ -60,6 +75,7 @@ export default function RegisterScreen() {
         }
         onChangeText={(text) => formik.setFieldValue("password", text)}
         errorMessage={formik.errors.password}
+        autoCapitalize="none"
       />
       <Input
         placeholder="Repetir contraseña"
@@ -75,6 +91,7 @@ export default function RegisterScreen() {
         }
         onChangeText={(text) => formik.setFieldValue("repeatPassword", text)}
         errorMessage={formik.errors.repeatPassword}
+        autoCapitalize="none"
       />
       <Button
         title="Unirse"

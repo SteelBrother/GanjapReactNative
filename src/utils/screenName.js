@@ -14,7 +14,8 @@ const homeStack = {
   };
   const environmentStack = {
     tab: "EnvironmentTab",
-    environment:"Environment"
+    environment:"Environment",
+    environmentList: 'EnvironmentList',
   };
   const galleryStack = {
     tab: "GalleryTab",
