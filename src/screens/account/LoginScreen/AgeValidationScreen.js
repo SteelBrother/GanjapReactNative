@@ -13,6 +13,23 @@ const AgeValidationScreen = () => {
     navigation.navigate(screen.ExpStack.tab);
   };
 
+
+  const handleTermsPress = () => {
+    console.log("Navegando a Términos");
+    navigation.reset({
+      index: 0, // Este índice indica que la pila de navegación será reemplazada completamente por la pantalla "Terminos"
+      routes: [{ name: "Terminos" }],
+    });
+  };
+  
+  const handlePrivacyPress = () => {
+    console.log("Navegando a Política de privacidad");
+    navigation.reset({
+      index: 0, // Este índice indica que la pila de navegación será reemplazada completamente por la pantalla "Politicas"
+      routes: [{ name: "Politicas" }],
+    });
+  };
+  
   const handleReject = () => {
     // Lógica para rechazar
   };
@@ -33,11 +50,11 @@ const AgeValidationScreen = () => {
           </Text>
           <Text style={styles.confirmText}>
             Confirmo que tengo 18 años o más y que estoy de acuerdo con los{" "}
-            <Text style={styles.linkText} onPress={() => Linking.openURL("https://www.example.com/terms")}>
+            <Text style={styles.linkText} onPress={handleTermsPress}>
               Términos de uso
             </Text>{" "}
             y la{" "}
-            <Text style={styles.linkText} onPress={() => Linking.openURL("https://www.example.com/privacy")}>
+            <Text style={styles.linkText} onPress={handlePrivacyPress}>
               Política de privacidad
             </Text>.
           </Text>

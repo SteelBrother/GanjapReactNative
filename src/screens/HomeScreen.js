@@ -65,6 +65,18 @@ export default function HomeScreen() {
       co2: { value: 350, unit: 'ppm', status: 'optimal' },
     },
     '2024-11-15': {
+      temperature: { value: 19, unit: '°C', status: 'optimal' },
+      humidity: { value: 48, unit: '%', status: 'optimal' },
+      light: { value: 11, unit: 'horas', status: 'optimal' },
+      co2: { value: 360, unit: 'ppm', status: 'optimal' },
+    },
+    '2024-11-15': {
+      temperature: { value: 21, unit: '°C', status: 'optimal' },
+      humidity: { value: 50, unit: '%', status: 'optimal' },
+      light: { value: 10, unit: 'horas', status: 'optimal' },
+      co2: { value: 360, unit: 'ppm', status: 'optimal' },
+    },
+    '2024-11-16': {
       temperature: { value: 21, unit: '°C', status: 'optimal' },
       humidity: { value: 50, unit: '%', status: 'optimal' },
       light: { value: 12, unit: 'horas', status: 'optimal' },
